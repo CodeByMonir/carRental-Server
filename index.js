@@ -1,9 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const cors = require('cors');
+const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
 const app = express();
-
-
+app.use(cors());
 app.use(express.json());
 const uri = process.env.MONGODB_URI;
 const PORT = process.env.PORT || 5000
@@ -15,6 +16,30 @@ const client = new MongoClient(uri, {
   }
 });
 
+const JWKS = createRemoteJWKSet(new URL(`${process.env.BASE_URL}/api/auth/jwks`));
+
+const verifyToken = async (req,res,next) => {
+  const authHeader = req?.headers.authorization;
+  if(!authHeader){
+    return res.status(401).send({message: 'unauthorized access'});
+  }
+  console.log(authHeader);
+  const token = authHeader?.split(' ')[1];
+  if(!token){
+    return res.status(401).send({message: 'unauthorized access'});
+  }
+ try {
+   const {payload} = await jwtVerify(token, JWKS);
+   console.log(payload);
+   next();
+   
+ } catch (error) {
+  return res.status(403).json({message: 'forbidden access'});
+  
+ }
+  
+
+}
 
 
 async function run() {
@@ -25,6 +50,12 @@ async function run() {
     const bookingCollection = db.collection("booking");
 
 
+
+    app.post('/booking', verifyToken, async (req, res) => {
+      const car = req.body;
+      const result = await bookingCollection.insertOne(car);
+      res.send(result);
+    })
     // 
     app.get('/cars', async (req, res) => {
       const { search } = req.query;
