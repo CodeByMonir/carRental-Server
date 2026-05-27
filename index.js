@@ -50,52 +50,52 @@ async function run() {
     const bookingCollection = db.collection("booking");
 
 
-
+    // created for booking a car and secured with jwt
     app.post('/booking', verifyToken, async (req, res) => {
       const car = req.body;
       const result = await bookingCollection.insertOne(car);
       res.send(result);
     })
-    // 
+    // created for getting all booking
     app.get('/booking/:id', verifyToken, async (req, res) => {
       const userId = req.params.id;
       const query = { userId: userId };
       const result = await bookingCollection.find(query).toArray();
       res.send(result);
     })
-    // 
+    // created for getting single booking
     app.get('/cars/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carsCollection.findOne(query);
       res.send(result);
     })
-    // 
+    // created for adding a car
     app.post('/cars', verifyToken, async (req, res) => {
       const car = req.body;
       const result = await carsCollection.insertOne(car);
       res.send(result);
     })
-    // 
+    // created for getting all added cars
     app.get('/added-cars/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = {userId: id};
       const result = await carsCollection.find(query).toArray();
       res.send(result);
     })
-    // 
+    // created for deleting a car
     app.delete('/added-cars/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await carsCollection.deleteOne(query);
       res.send(result);
     })
-    // 
+    // created for getting featured cars
     app.get('/featured-cars',  async (req, res) => {
       const result = await carsCollection.find().limit(3).toArray();
       res.send(result);
     })
-    
+    // created for updating a car
     app.patch('/update/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
       const body = req.body;
@@ -106,7 +106,7 @@ async function run() {
       );
       res.send(result);
     })
-    // 
+    // created for getting all cars
     app.get('/cars', async (req, res) => {
       const { search } = req.query;
      
@@ -152,16 +152,9 @@ async function run() {
 
 run().catch(console.dir);
 
-
-
-
 app.get('/', (req, res) => {
   res.send('Hello Boss!')
 })
-
-
-
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`)
