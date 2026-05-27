@@ -71,6 +71,12 @@ async function run() {
       res.send(result);
     })
     // 
+    app.post('/cars', verifyToken, async (req, res) => {
+      const car = req.body;
+      const result = await carsCollection.insertOne(car);
+      res.send(result);
+    })
+    // 
     app.get('/cars', async (req, res) => {
       const { search } = req.query;
      
