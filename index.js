@@ -84,6 +84,29 @@ async function run() {
       res.send(result);
     })
     // 
+    app.delete('/added-cars/:id', verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await carsCollection.deleteOne(query);
+      res.send(result);
+    })
+    // 
+    app.get('/featured-cars',  async (req, res) => {
+      const result = await carsCollection.find().limit(3).toArray();
+      res.send(result);
+    })
+    
+    app.patch('/update/:id', verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const body = req.body;
+      
+      const result = await carsCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: body }
+      );
+      res.send(result);
+    })
+    // 
     app.get('/cars', async (req, res) => {
       const { search } = req.query;
      
