@@ -1,14 +1,12 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const app = express();
 
 
 app.use(express.json());
-
-
 const uri = process.env.MONGODB_URI;
 const PORT = process.env.PORT || 5000
-
-
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -16,6 +14,7 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
+
 
 
 async function run() {
@@ -26,6 +25,7 @@ async function run() {
     const bookingCollection = db.collection("booking");
 
 
+    // 
     app.get('/cars', async (req, res) => {
       const { search } = req.query;
      
