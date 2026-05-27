@@ -77,6 +77,13 @@ async function run() {
       res.send(result);
     })
     // 
+    app.get('/added-cars/:id', verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const query = {userId: id};
+      const result = await carsCollection.find(query).toArray();
+      res.send(result);
+    })
+    // 
     app.get('/cars', async (req, res) => {
       const { search } = req.query;
      
