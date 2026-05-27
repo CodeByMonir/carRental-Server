@@ -62,7 +62,14 @@ async function run() {
       const query = { userId: userId };
       const result = await bookingCollection.find(query).toArray();
       res.send(result);
-    }) 
+    })
+    // 
+    app.get('/cars/:id', verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await carsCollection.findOne(query);
+      res.send(result);
+    })
     // 
     app.get('/cars', async (req, res) => {
       const { search } = req.query;
